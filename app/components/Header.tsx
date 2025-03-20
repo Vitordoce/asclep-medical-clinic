@@ -172,12 +172,24 @@ export default function Header() {
           </div>
           
           <div className="flex items-center space-x-4">
+            <Link
+              href="/signup"
+              className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+            >
+              Sign Up
+            </Link>
             <button 
               onClick={() => setIsLoginOpen(true)}
               className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
             >
               Login
             </button>
+            <Link 
+              href="/doctor/login"
+              className="text-purple-600 hover:text-purple-800 font-medium transition-colors"
+            >
+              Doctor Login
+            </Link>
             <button 
               onClick={() => setIsAppointmentOpen(true)}
               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"

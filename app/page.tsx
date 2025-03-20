@@ -1,10 +1,12 @@
 import Image from "next/image";
 import Header from "./components/Header";
+import Faq from "./components/Faq";
 
 export default function Home() {
   return (
     <div className="font-sans">
       <Header />
+      
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white">
         <div className="container mx-auto px-6 py-20 max-w-6xl">
@@ -25,14 +27,14 @@ export default function Home() {
               <div className="relative h-80 w-full">
                 <div className="absolute inset-0 bg-blue-600 rounded-lg transform rotate-3"></div>
                 <div className="absolute inset-0 bg-white rounded-lg overflow-hidden">
-                  <Image
+        <Image
                     src="/doctor-team.jpg"
                     alt="Medical team"
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
                     style={{ objectFit: 'cover' }}
-                    priority
-                  />
+          priority
+        />
                 </div>
               </div>
             </div>
@@ -94,7 +96,7 @@ export default function Home() {
             {/* Doctor 1 */}
             <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-64 relative">
-                <Image
+          <Image
                   src="/doctor-1.jpg"
                   alt="Dr. Emma Wilson"
                   fill
@@ -113,7 +115,7 @@ export default function Home() {
             {/* Doctor 2 */}
             <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-64 relative">
-                <Image
+          <Image
                   src="/doctor-2.jpg"
                   alt="Dr. James Chen"
                   fill
@@ -132,7 +134,7 @@ export default function Home() {
             {/* Doctor 3 */}
             <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-64 relative">
-                <Image
+          <Image
                   src="/doctor-3.jpg"
                   alt="Dr. Sarah Johnson"
                   fill
@@ -159,66 +161,7 @@ export default function Home() {
 
       {/* FAQ Section */}
       <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-6 max-w-4xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Frequently Asked Questions</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">Find answers to common questions about our services and procedures.</p>
-          </div>
-          
-          <div className="space-y-6">
-            {/* FAQ Item 1 */}
-            <div className="bg-white rounded-xl p-6 shadow-md">
-              <button className="flex justify-between items-center w-full text-left">
-                <h3 className="text-lg font-semibold text-gray-800">What insurance plans do you accept?</h3>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              <div className="mt-3">
-                <p className="text-gray-600">We accept most major insurance plans including Medicare, Blue Cross Blue Shield, Aetna, Cigna, and UnitedHealthcare. Please contact our office to verify coverage for your specific plan.</p>
-              </div>
-            </div>
-            
-            {/* FAQ Item 2 */}
-            <div className="bg-white rounded-xl p-6 shadow-md">
-              <button className="flex justify-between items-center w-full text-left">
-                <h3 className="text-lg font-semibold text-gray-800">How do I schedule an appointment?</h3>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              <div className="mt-3">
-                <p className="text-gray-600">You can schedule an appointment by calling our office, using our online booking system, or through our mobile app. Virtual consultations are also available for eligible patients.</p>
-              </div>
-            </div>
-            
-            {/* FAQ Item 3 */}
-            <div className="bg-white rounded-xl p-6 shadow-md">
-              <button className="flex justify-between items-center w-full text-left">
-                <h3 className="text-lg font-semibold text-gray-800">What should I bring to my first appointment?</h3>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              <div className="mt-3">
-                <p className="text-gray-600">Please bring your insurance card, photo ID, list of current medications, medical history records, and any referral forms if required by your insurance. Arriving 15 minutes early to complete paperwork is recommended.</p>
-              </div>
-            </div>
-            
-            {/* FAQ Item 4 */}
-            <div className="bg-white rounded-xl p-6 shadow-md">
-              <button className="flex justify-between items-center w-full text-left">
-                <h3 className="text-lg font-semibold text-gray-800">Do you offer telehealth services?</h3>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              <div className="mt-3">
-                <p className="text-gray-600">Yes, we offer secure telehealth services for consultations, follow-ups, and certain treatments. Our virtual platform is HIPAA-compliant and accessible through your computer or smartphone.</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Faq />
       </section>
 
       {/* Reviews Section */}

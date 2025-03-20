@@ -9,6 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@progress/kendo-data-query": "^1.7.1",
+    "@progress/kendo-drawing": "^1.21.2",
+    "@progress/kendo-licensing": "^1.5.1",
+    "@progress/kendo-react-buttons": "^10.0.0",
+    "@progress/kendo-react-common": "^10.0.0",
+    "@progress/kendo-react-dateinputs": "^10.0.0",
+    "@progress/kendo-react-dropdowns": "^10.0.0",
+    "@progress/kendo-react-inputs": "^10.0.0",
+    "@progress/kendo-react-intl": "^10.0.0",
+    "@progress/kendo-react-scheduler": "^10.0.0",
+    "@progress/kendo-theme-default": "^10.3.1",
     "next": "^14.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -17,11 +28,11 @@
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "autoprefixer": "^10.4.16",
+    "autoprefixer": "^10.4.21",
     "eslint": "^8.0.0",
     "eslint-config-next": "^14.0.0",
-    "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.0.0"
   }
 }
