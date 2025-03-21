@@ -12,8 +12,8 @@ export default function Home() {
         <div className="container mx-auto px-6 py-20 max-w-6xl">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-1/2 mb-10 md:mb-0">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">Innovative Healthcare for a Better Tomorrow</h1>
-              <p className="text-xl mb-8">Experience cutting-edge medical care with personalized attention at Asclep Medical Center.</p>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 text-blue-900">Innovative Healthcare for a Better Tomorrow</h1>
+              <p className="text-xl mb-8 text-blue-900">Experience cutting-edge medical care with personalized attention at Asclep Medical Center.</p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button className="bg-white text-blue-600 px-6 py-3 rounded-md font-medium text-lg hover:bg-blue-50 transition-colors">
                   Book Appointment
@@ -88,8 +88,8 @@ export default function Home() {
       <section className="py-20">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Meet Our Specialists</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">Our team of experienced doctors is committed to providing the highest standard of care.</p>
+            <h2 className="text-3xl font-bold text-blue-800 mb-4">Meet Our Specialists</h2>
+            <p className="text-blue-600 max-w-2xl mx-auto">Our team of experienced doctors is committed to providing the highest standard of care.</p>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -168,8 +168,8 @@ export default function Home() {
       <section className="py-20">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Patient Reviews</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">See what our patients are saying about their experience at Asclep Medical Center.</p>
+            <h2 className="text-3xl font-bold text-blue-800 mb-4">Patient Reviews</h2>
+            <p className="text-blue-600 max-w-2xl mx-auto">See what our patients are saying about their experience at Asclep Medical Center.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

@@ -87,14 +87,14 @@ export default function Signup() {
   if (formSubmitted) {
     return (
       <div className="text-center py-8">
-        <div className="mb-6 inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="mb-6 inline-flex items-center justify-center w-16 h-16 bg-[var(--success-100)] rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[var(--success-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Registration Successful!</h2>
-        <p className="text-gray-600 mb-6">Thank you for signing up with Asclep Medical Center.</p>
-        <Button themeColor="primary" onClick={() => window.location.href = "/"}>
+        <h2 className="text-2xl font-bold mb-2">Registration Successful!</h2>
+        <p className="text-[var(--gray-600)] mb-6">Thank you for signing up with Asclep Medical Center.</p>
+        <Button themeColor="primary" onClick={() => window.location.href = "/"} className="bg-[var(--blue-500)] hover:bg-[var(--blue-700)]">
           Return to Home
         </Button>
       </div>
@@ -104,12 +104,12 @@ export default function Signup() {
   return (
     <div className="p-6 bg-white rounded-xl shadow-md">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-800">Create an Account</h2>
-        <p className="text-gray-600 mt-2">Join Asclep Medical Center and manage your healthcare online</p>
+        <h2 className="text-2xl font-bold text-[var(--blue-900)] mb-2">Create an Account</h2>
+        <p className="text-[var(--gray-600)] mt-2">Join Asclep Medical Center and manage your healthcare online</p>
       </div>
 
       {submitError && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+        <div className="alert alert-danger">
           {submitError}
         </div>
       )}
@@ -161,7 +161,7 @@ export default function Signup() {
                   label="I am a"
                   component={(fieldProps: FormInputProps) => (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-[var(--gray-700)] mb-1">
                         {fieldProps.label}
                       </label>
                       <DropDownList
@@ -213,17 +213,16 @@ export default function Signup() {
             <div className="flex flex-col space-y-4">
               <Button
                 type="submit"
-                themeColor="primary"
                 disabled={!formRenderProps.allowSubmit}
-                className="py-3"
+                className="py-3 bg-[var(--blue-500)] hover:bg-[var(--blue-700)] text-white"
               >
                 Create Account
               </Button>
               
               <div className="text-center">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-[var(--gray-600)]">
                   Already have an account?{" "}
-                  <a href="/login" className="font-medium text-blue-600 hover:text-blue-800">
+                  <a href="/login" className="font-medium text-[var(--blue-600)] hover:text-[var(--blue-800)]">
                     Sign in
                   </a>
                 </p>

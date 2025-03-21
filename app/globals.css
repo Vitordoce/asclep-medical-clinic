@@ -3,13 +3,63 @@
 @tailwind utilities;
 
 :root {
+  /* Base colors */
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* Bold blue palette */
+  --blue-50: #eef5ff;
+  --blue-100: #d9e8ff;
+  --blue-200: #b8d4ff;
+  --blue-300: #8ab7ff;
+  --blue-400: #5d93ff;
+  --blue-500: #3366ff; /* Primary blue - bold and intense */
+  --blue-600: #1a4cff;
+  --blue-700: #0033e0;
+  --blue-800: #0026b3;
+  --blue-900: #002080;
+  --blue-950: #001352;
+  
+  /* Neutral colors */
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --black: #000000;
+  
+  /* Status colors */
+  --success-50: #ecfdf5;
+  --success-100: #d1fae5;
+  --success-500: #00c853; /* Bold success green */
+  --success-700: #018942;
+  
+  --danger-50: #fef2f2;
+  --danger-100: #fee2e2;
+  --danger-500: #ff3b30; /* Bold danger red */
+  --danger-700: #c70011;
+  
+  --attention-50: #fffbeb;
+  --attention-100: #fef3c7;
+  --attention-500: #ff9500; /* Bold attention orange */
+  --attention-700: #c66a00;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--blue-500);
+  --color-primary-dark: var(--blue-700);
+  --color-primary-light: var(--blue-300);
+  --color-success: var(--success-500);
+  --color-danger: var(--danger-500);
+  --color-attention: var(--attention-500);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -18,6 +68,7 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --blue-500: #4d7aff; /* Brighter blue for dark mode */
   }
 }
 
@@ -25,4 +76,58 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Component utility classes */
+.btn {
+  @apply px-4 py-2 rounded-md font-medium transition-colors;
+}
+
+.btn-primary {
+  background-color: var(--blue-500);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background-color: var(--blue-600);
+}
+
+.btn-danger {
+  background-color: var(--danger-500);
+  color: var(--white);
+}
+
+.btn-danger:hover {
+  background-color: var(--danger-700);
+}
+
+.btn-success {
+  background-color: var(--success-500);
+  color: var(--white);
+}
+
+.btn-success:hover {
+  background-color: var(--success-700);
+}
+
+.alert {
+  @apply p-4 rounded-md border my-2;
+}
+
+.alert-danger {
+  background-color: var(--danger-50);
+  border-color: var(--danger-500);
+  color: var(--danger-700);
+}
+
+.alert-success {
+  background-color: var(--success-50);
+  border-color: var(--success-500);
+  color: var(--success-700);
+}
+
+.alert-attention {
+  background-color: var(--attention-50);
+  border-color: var(--attention-500);
+  color: var(--attention-700);
 }
