@@ -1,4 +1,5 @@
-import UsersAdmin from '../../components/UsersAdmin';
+"use client"
+import UsersAdmin from '../components/UsersAdmin';
 
 export default function UsersAdminPage() {
     return <UsersAdmin />;
