@@ -178,17 +178,11 @@ export default function Header() {
             >
               Sign Up
             </Link>
-            <button 
-              onClick={() => setIsLoginOpen(true)}
-              className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
-            >
-              Login
-            </button>
             <Link 
               href="/doctor/login"
               className="text-purple-600 hover:text-purple-800 font-medium transition-colors"
             >
-              Doctor Login
+              Login
             </Link>
             <button 
               onClick={() => setIsAppointmentOpen(true)}

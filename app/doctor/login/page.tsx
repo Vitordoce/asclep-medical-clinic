@@ -1,10 +1,10 @@
 import LoginLayout from "@/app/components/LoginLayout";
-import DoctorLogin from "@/app/components/DoctorLogin";
+import LoginForm from "@/app/components/LoginForm";
 
 export default function DoctorLoginPage() {
   return (
     <LoginLayout>
-      <DoctorLogin />
+      <LoginForm />
     </LoginLayout>
   );
 } 
