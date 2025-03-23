@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Form, Field, FormElement, FieldWrapper, FormRenderProps } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
 import { Input } from "@progress/kendo-react-inputs";
@@ -28,7 +27,7 @@ interface FormInputProps {
   [key: string]: unknown;
 }
 
-const userTypes = ["Patient", "Healthcare Provider", "Administrator"];
+const userTypes = ["Patient", "Doctor"];
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -44,28 +43,7 @@ const FormInput = (fieldRenderProps: FormInputProps) => {
 
 export default function UserForm({ user, isOpen, onClose, onSave }: UserFormProps) {
   const isEditMode = Boolean(user?.id);
-  const [formValues, setFormValues] = useState<User>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    userType: "Patient"
-  });
-
-  useEffect(() => {
-    if (user) {
-      setFormValues(user);
-    } else {
-      setFormValues({
-        firstName: "",
-        lastName: "",
-        email: "",
-        userType: "Patient"
-      });
-    }
-  }, [user, isOpen]);
-
-  if (!isOpen) return null;
-
+  
   // Form validators
   const emailValidator = (value: string) => {
     return !value ? "Email is required." 
@@ -89,6 +67,17 @@ export default function UserForm({ user, isOpen, onClose, onSave }: UserFormProp
     onClose();
   };
 
+  // Default values for a new user
+  const defaultValues: User = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    userType: "Patient"
+  };
+
+  // If form is not open, don't render anything
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       <Card className="w-full max-w-2xl bg-white rounded-xl shadow-lg">
@@ -98,7 +87,8 @@ export default function UserForm({ user, isOpen, onClose, onSave }: UserFormProp
           </CardTitle>
           
           <Form
-            initialValues={formValues}
+            key={user?.id || 'newUser'} 
+            initialValues={user || defaultValues}
             onSubmit={handleSubmit}
             render={(formRenderProps: FormRenderProps) => (
               <FormElement>

@@ -1,76 +1,13 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ListView } from '@progress/kendo-react-listview';
 import { Button } from '@progress/kendo-react-buttons';
 import '@progress/kendo-theme-default/dist/all.css';
 import UserForm from './UserForm';
 import { User } from '../types';
 
-const users: User[] = [
-    {
-        id: 1,
-        firstName: "Sarah",
-        lastName: "Johnson",
-        name: "Sarah Johnson",
-        email: "sarah.j@example.com",
-        userType: "Patient",
-        lastVisit: "2024-03-15",
-        appointmentsTotal: 8,
-        status: "active",
-        avatar: "/avatars/avatar1.jpg"
-    },
-    {
-        id: 2,
-        firstName: "Michael",
-        lastName: "Chen",
-        name: "Michael Chen",
-        email: "m.chen@example.com",
-        userType: "Patient",
-        lastVisit: "2024-03-18",
-        appointmentsTotal: 5,
-        status: "active",
-        avatar: "/avatars/avatar2.jpg"
-    },
-    {
-        id: 3,
-        firstName: "Emma",
-        lastName: "Wilson",
-        name: "Emma Wilson",
-        email: "emma.w@example.com",
-        userType: "Healthcare Provider",
-        lastVisit: "2024-03-10",
-        appointmentsTotal: 12,
-        status: "active",
-        avatar: "/avatars/avatar3.jpg"
-    },
-    {
-        id: 4,
-        firstName: "James",
-        lastName: "Rodriguez",
-        name: "James Rodriguez",
-        email: "j.rodriguez@example.com",
-        userType: "Patient",
-        lastVisit: "2024-02-28",
-        appointmentsTotal: 3,
-        status: "inactive",
-        avatar: "/avatars/avatar4.jpg"
-    },
-    {
-        id: 5,
-        firstName: "Lisa",
-        lastName: "Thompson",
-        name: "Lisa Thompson",
-        email: "lisa.t@example.com",
-        userType: "Administrator",
-        lastVisit: "2024-03-19",
-        appointmentsTotal: 15,
-        status: "active",
-        avatar: "/avatars/avatar5.jpg"
-    }
-];
-
-const UserCard = (props: { dataItem: User }) => {
-    const { dataItem } = props;
+const UserCard = (props: { dataItem: User; onEdit: (user: User) => void; onDelete: (userId: number | string) => void }) => {
+    const { dataItem, onEdit, onDelete } = props;
     
     // Handle optional lastVisit field
     const formattedDate = dataItem.lastVisit 
@@ -87,7 +24,19 @@ const UserCard = (props: { dataItem: User }) => {
     // Generate initials from name or first/last name
     const initials = dataItem.name 
         ? dataItem.name.split(' ').map(n => n[0]).join('')
-        : `${dataItem.firstName[0]}${dataItem.lastName[0]}`;
+        : `${dataItem.firstName?.[0] || ''}${dataItem.lastName?.[0] || ''}`;
+
+    const handleEditClick = (e: React.MouseEvent) => {
+        e.stopPropagation(); // Prevent event bubbling
+        onEdit(dataItem);
+    };
+
+    const handleDeleteClick = (e: React.MouseEvent) => {
+        e.stopPropagation(); // Prevent event bubbling
+        if (confirm('Are you sure you want to delete this user?')) {
+            onDelete(dataItem.id!);
+        }
+    };
 
     return (
         <div className="p-4 border rounded-lg shadow-sm bg-white hover:shadow-md transition-shadow">
@@ -127,7 +76,7 @@ const UserCard = (props: { dataItem: User }) => {
                 {/* Actions */}
                 <div className="flex items-center gap-2 ml-4">
                     <button 
-                        onClick={() => console.log('Edit user:', dataItem.id)}
+                        onClick={handleEditClick}
                         className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
                         title="Edit user"
                     >
@@ -136,7 +85,7 @@ const UserCard = (props: { dataItem: User }) => {
                         </svg>
                     </button>
                     <button 
-                        onClick={() => console.log('Delete user:', dataItem.id)}
+                        onClick={handleDeleteClick}
                         className="p-2 text-gray-400 hover:text-red-600 transition-colors"
                         title="Delete user"
                     >
@@ -151,9 +100,60 @@ const UserCard = (props: { dataItem: User }) => {
 };
 
 const UsersAdmin: React.FC = () => {
-    const [usersList, setUsersList] = useState<User[]>(users);
+    const [usersList, setUsersList] = useState<User[]>([]);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    // Fetch users from API
+    const fetchUsers = async () => {
+        try {
+            setIsLoading(true);
+            const response = await fetch('/api/users');
+            
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            // Transform the API data to match our User type if needed
+            const formattedUsers = data.map((user: { 
+                id: number | string; 
+                first_name: string; 
+                last_name: string;
+                email: string;
+                role: string;
+                last_visit?: string;
+                appointments_total?: number;
+                status?: 'active' | 'inactive';
+                avatar?: string;
+            }) => ({
+                id: user.id,
+                firstName: user.first_name,
+                lastName: user.last_name,
+                name: `${user.first_name} ${user.last_name}`,
+                email: user.email,
+                userType: user.role,
+                lastVisit: user.last_visit || null,
+                appointmentsTotal: user.appointments_total || 0,
+                status: user.status || 'active',
+                avatar: user.avatar || "/avatars/default.jpg"
+            }));
+            
+            setUsersList(formattedUsers);
+        } catch (err) {
+            setError('Failed to fetch users. Please try again later.');
+            console.error('Error fetching users:', err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchUsers();
+    }, []);
 
     const handleAddUser = () => {
         setSelectedUser(undefined);
@@ -165,36 +165,104 @@ const UsersAdmin: React.FC = () => {
         setIsFormOpen(true);
     };
 
-    const handleSaveUser = (userData: User) => {
-        if (userData.id) {
-            // Edit existing user
-            setUsersList(prevUsers => 
-                prevUsers.map(user => 
-                    user.id === userData.id 
-                        ? { 
-                            ...userData, 
-                            name: `${userData.firstName} ${userData.lastName}`,
-                            // Keep existing values that aren't in the form
-                            lastVisit: user.lastVisit,
-                            appointmentsTotal: user.appointmentsTotal,
-                            status: user.status,
-                            avatar: user.avatar
-                          } 
-                        : user
-                )
-            );
-        } else {
-            // Add new user
-            const newUser = {
-                ...userData,
-                id: Date.now(), // Generate a temporary ID
-                name: `${userData.firstName} ${userData.lastName}`,
-                lastVisit: new Date().toISOString().split('T')[0],
-                appointmentsTotal: 0,
-                status: 'active' as const,
-                avatar: "/avatars/default.jpg"
-            };
-            setUsersList(prevUsers => [...prevUsers, newUser]);
+    const handleSaveUser = async (userData: User) => {
+        try {
+            if (userData.id) {
+                // Edit existing user - PUT request
+                const response = await fetch(`/api/users/${userData.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: userData.email,
+                        first_name: userData.firstName,
+                        last_name: userData.lastName,
+                        role: userData.userType,
+                        password: '',
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+
+                await response.json();
+                
+                // Update local state
+                setUsersList(prevUsers => 
+                    prevUsers.map(user => 
+                        user.id === userData.id 
+                            ? { 
+                                ...userData, 
+                                name: `${userData.firstName} ${userData.lastName}`,
+                              } 
+                            : user
+                    )
+                );
+            } else {
+                // Add new user - POST request
+                const response = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: userData.email,
+                        first_name: userData.firstName,
+                        last_name: userData.lastName,
+                        role: userData.userType,
+                        password: 'password', // You should have a proper password field in the form
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+
+                const newUser = await response.json();
+                
+                // Format the response to match our User type
+                const formattedNewUser = {
+                    id: newUser.id,
+                    firstName: newUser.first_name,
+                    lastName: newUser.last_name,
+                    name: `${newUser.first_name} ${newUser.last_name}`,
+                    email: newUser.email,
+                    userType: newUser.role,
+                    lastVisit: new Date().toISOString().split('T')[0],
+                    appointmentsTotal: 0,
+                    status: 'active' as const,
+                    avatar: "/avatars/default.jpg"
+                };
+                
+                // Update local state
+                setUsersList(prevUsers => [...prevUsers, formattedNewUser]);
+            }
+            
+            // Close the form
+            setIsFormOpen(false);
+        } catch (err) {
+            console.error('Error saving user:', err);
+            alert('Failed to save user. Please try again.');
+        }
+    };
+
+    const handleDeleteUser = async (userId: number | string) => {
+        try {
+            const response = await fetch(`/api/users/${userId}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+
+            // Update local state
+            setUsersList(prevUsers => prevUsers.filter(user => user.id !== userId));
+        } catch (err) {
+            console.error('Error deleting user:', err);
+            alert('Failed to delete user. Please try again.');
         }
     };
 
@@ -212,19 +280,38 @@ const UsersAdmin: React.FC = () => {
                             Add New User
                         </Button>
                     </div>
-                    <ListView
-                        data={usersList}
-                        item={(props) => (
-                            <div onClick={() => handleEditUser(props.dataItem)}>
-                                <UserCard {...props} />
-                            </div>
-                        )}
-                        className="space-y-2"
-                        style={{
-                            border: 'none',
-                            background: 'transparent'
-                        }}
-                    />
+                    
+                    {isLoading ? (
+                        <div className="text-center py-10">
+                            <p>Loading users...</p>
+                        </div>
+                    ) : error ? (
+                        <div className="text-center py-10 text-red-600">
+                            <p>{error}</p>
+                            <Button 
+                                onClick={fetchUsers} 
+                                className="mt-4"
+                            >
+                                Try Again
+                            </Button>
+                        </div>
+                    ) : (
+                        <ListView
+                            data={usersList}
+                            item={(props) => (
+                                <UserCard 
+                                    {...props} 
+                                    onEdit={handleEditUser} 
+                                    onDelete={handleDeleteUser}
+                                />
+                            )}
+                            className="space-y-2"
+                            style={{
+                                border: 'none',
+                                background: 'transparent'
+                            }}
+                        />
+                    )}
                 </div>
             </main>
 

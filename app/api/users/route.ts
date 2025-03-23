@@ -15,9 +15,13 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { email, password, first_name, last_name, role } = body;
+    
+    // Validate the role value against allowed values from database constraint
+    const normalizedRole = role?.toLowerCase();
+    
     const result = await pool.query(
       'INSERT INTO users(email, password, first_name, last_name, role) VALUES($1, $2, $3, $4, $5) RETURNING *',
-      [email, password, first_name, last_name, role]
+      [email, password, first_name, last_name, normalizedRole]
     );
     return NextResponse.json(result.rows[0], { status: 201 });
   } catch (error) {
