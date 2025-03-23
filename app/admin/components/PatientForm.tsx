@@ -1,18 +1,16 @@
 "use client";
 
 import { Form, Field, FormElement, FieldWrapper, FormRenderProps } from "@progress/kendo-react-form";
-import { Error } from "@progress/kendo-react-labels";
 import { Input } from "@progress/kendo-react-inputs";
-import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { Button } from "@progress/kendo-react-buttons";
 import { Card, CardBody, CardTitle } from "@progress/kendo-react-layout";
 import { User } from "../types";
 
-interface UserFormProps {
-  user?: User;
+interface PatientFormProps {
+  patient?: User;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (user: User) => void;
+  onSave: (patient: User) => void;
 }
 
 interface FormInputProps {
@@ -27,11 +25,6 @@ interface FormInputProps {
   [key: string]: unknown;
 }
 
-const roleOptions = [
-  { text: "Patient", value: "patient" },
-  { text: "Doctor", value: "doctor" }
-];
-
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const FormInput = (fieldRenderProps: FormInputProps) => {
@@ -39,13 +32,15 @@ const FormInput = (fieldRenderProps: FormInputProps) => {
   return (
     <div>
       <Input {...others} />
-      {visited && validationMessage && <Error>{validationMessage}</Error>}
+      {visited && validationMessage && (
+        <div className="text-red-500 text-sm mt-1">{validationMessage}</div>
+      )}
     </div>
   );
 };
 
-export default function UserForm({ user, isOpen, onClose, onSave }: UserFormProps) {
-  const isEditMode = Boolean(user?.id);
+export default function PatientForm({ patient, isOpen, onClose, onSave }: PatientFormProps) {
+  const isEditMode = Boolean(patient?.id);
   
   // Form validators
   const emailValidator = (value: string) => {
@@ -59,27 +54,30 @@ export default function UserForm({ user, isOpen, onClose, onSave }: UserFormProp
   };
 
   const handleSubmit = (data: Record<string, unknown>) => {
-    const userData = data as unknown as User;
+    const patientData = data as unknown as User;
     
     // Preserve the ID if in edit mode
-    if (isEditMode && user?.id) {
-      userData.id = user.id;
+    if (isEditMode && patient?.id) {
+      patientData.id = patient.id;
     }
     
-    // Set the role to match the userType for API consistency
-    userData.role = userData.userType === 'Doctor' ? 'doctor' : 'patient';
+    // Always set role to patient
+    patientData.userType = "patient";
+    patientData.role = "patient";
     
-    onSave(userData);
+    onSave(patientData);
     onClose();
   };
 
-  // Default values for a new user
+  // Default values for a new patient
   const defaultValues: User = {
+    id: 0, // Temporary ID, will be replaced by server-generated ID
     firstName: "",
     lastName: "",
     email: "",
     userType: "patient",
-    role: "patient"
+    role: "patient",
+    status: "active"
   };
 
   // If form is not open, don't render anything
@@ -90,12 +88,12 @@ export default function UserForm({ user, isOpen, onClose, onSave }: UserFormProp
       <Card className="w-full max-w-2xl bg-white rounded-xl shadow-lg">
         <CardBody>
           <CardTitle className="text-2xl font-bold text-[var(--blue-900)] mb-6">
-            {isEditMode ? "Edit User" : "Add New User"}
+            {isEditMode ? "Edit Patient" : "Add New Patient"}
           </CardTitle>
           
           <Form
-            key={user?.id || 'newUser'} 
-            initialValues={user || defaultValues}
+            key={patient?.id || 'newPatient'} 
+            initialValues={patient || defaultValues}
             onSubmit={handleSubmit}
             render={(formRenderProps: FormRenderProps) => (
               <FormElement>
@@ -137,29 +135,10 @@ export default function UserForm({ user, isOpen, onClose, onSave }: UserFormProp
                 <div className="mb-6">
                   <FieldWrapper>
                     <Field
-                      id="userType"
-                      name="userType"
-                      label="User Type"
-                      component={(fieldProps: FormInputProps) => (
-                        <div>
-                          <label className="block text-sm font-medium text-[var(--gray-700)] mb-1">
-                            {fieldProps.label}
-                          </label>
-                          <DropDownList
-                            data={roleOptions}
-                            textField="text"
-                            dataItemKey="value"
-                            value={roleOptions.find(r => r.value === (fieldProps.value?.toLowerCase() || 'patient'))}
-                            onChange={(e) => {
-                              fieldProps.onChange?.({ value: e.value.text });
-                            }}
-                          />
-                          {fieldProps.visited && fieldProps.validationMessage && (
-                            <Error>{fieldProps.validationMessage}</Error>
-                          )}
-                        </div>
-                      )}
-                      validator={requiredValidator}
+                      id="phone"
+                      name="phone"
+                      label="Phone Number"
+                      component={FormInput}
                     />
                   </FieldWrapper>
                 </div>
@@ -178,7 +157,7 @@ export default function UserForm({ user, isOpen, onClose, onSave }: UserFormProp
                     disabled={!formRenderProps.allowSubmit}
                     className="py-2 px-4 bg-[var(--blue-500)] hover:bg-[var(--blue-700)] text-white"
                   >
-                    {isEditMode ? "Save Changes" : "Create User"}
+                    {isEditMode ? "Save Changes" : "Create Patient"}
                   </Button>
                 </div>
               </FormElement>

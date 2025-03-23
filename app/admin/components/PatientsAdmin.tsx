@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { ListView } from '@progress/kendo-react-listview';
 import { Button } from '@progress/kendo-react-buttons';
 import '@progress/kendo-theme-default/dist/all.css';
-import UserForm from './UserForm';
+import PatientForm from './PatientForm';
 import { User } from '../types';
 
 const UserCard = (props: { dataItem: User; onEdit: (user: User) => void; onDelete: (userId: number | string) => void }) => {
@@ -33,8 +33,13 @@ const UserCard = (props: { dataItem: User; onEdit: (user: User) => void; onDelet
 
     const handleDeleteClick = (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent event bubbling
+        if (!dataItem.id) {
+            alert('Cannot delete this user: Missing user ID');
+            return;
+        }
+        
         if (confirm('Are you sure you want to delete this user?')) {
-            onDelete(dataItem.id!);
+            onDelete(dataItem.id);
         }
     };
 
@@ -100,17 +105,17 @@ const UserCard = (props: { dataItem: User; onEdit: (user: User) => void; onDelet
 };
 
 const PatientsAdmin: React.FC = () => {
-    const [usersList, setUsersList] = useState<User[]>([]);
+    const [patientsList, setPatientsList] = useState<User[]>([]);
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
+    const [selectedPatient, setSelectedPatient] = useState<User | undefined>(undefined);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // Fetch users from API
-    const fetchUsers = async () => {
+    // Fetch patients from API
+    const fetchPatients = async () => {
         try {
             setIsLoading(true);
-            const response = await fetch('/api/users');
+            const response = await fetch('/api/patients');
             
             if (!response.ok) {
                 throw new Error(`Error: ${response.status}`);
@@ -119,7 +124,7 @@ const PatientsAdmin: React.FC = () => {
             const data = await response.json();
             
             // Transform the API data to match our User type if needed
-            const formattedUsers = data.map((user: { 
+            const formattedPatients = data.map((patient: { 
                 id: number | string; 
                 first_name: string; 
                 last_name: string;
@@ -129,56 +134,62 @@ const PatientsAdmin: React.FC = () => {
                 appointments_total?: number;
                 status?: 'active' | 'inactive';
                 avatar?: string;
-            }) => ({
-                id: user.id,
-                firstName: user.first_name,
-                lastName: user.last_name,
-                name: `${user.first_name} ${user.last_name}`,
-                email: user.email,
-                userType: user.role,
-                lastVisit: user.last_visit || null,
-                appointmentsTotal: user.appointments_total || 0,
-                status: user.status || 'active',
-                avatar: user.avatar || "/avatars/default.jpg"
-            }));
+            }) => {
+                if (!patient.id) {
+                    console.warn('Patient missing ID:', patient);
+                }
+                
+                return {
+                    id: patient.id,
+                    firstName: patient.first_name,
+                    lastName: patient.last_name,
+                    name: `${patient.first_name} ${patient.last_name}`,
+                    email: patient.email,
+                    userType: patient.role,
+                    lastVisit: patient.last_visit || null,
+                    appointmentsTotal: patient.appointments_total || 0,
+                    status: patient.status || 'active',
+                    avatar: patient.avatar || "/avatars/default.jpg"
+                };
+            });
             
-            setUsersList(formattedUsers);
+            setPatientsList(formattedPatients);
         } catch (err) {
-            setError('Failed to fetch users. Please try again later.');
-            console.error('Error fetching users:', err);
+            setError('Failed to fetch patients. Please try again later.');
+            console.error('Error fetching patients:', err);
         } finally {
             setIsLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchUsers();
+        fetchPatients();
     }, []);
 
-    const handleAddUser = () => {
-        setSelectedUser(undefined);
+    const handleAddPatient = () => {
+        setSelectedPatient(undefined);
         setIsFormOpen(true);
     };
 
-    const handleEditUser = (user: User) => {
-        setSelectedUser(user);
+    const handleEditPatient = (patient: User) => {
+        setSelectedPatient(patient);
         setIsFormOpen(true);
     };
 
-    const handleSaveUser = async (userData: User) => {
+    const handleSavePatient = async (patientData: User) => {
         try {
-            if (userData.id) {
-                // Edit existing user - PUT request
-                const response = await fetch(`/api/users/${userData.id}`, {
+            if (patientData.id) {
+                // Edit existing patient - PUT request
+                const response = await fetch(`/api/users/${patientData.id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        email: userData.email,
-                        first_name: userData.firstName,
-                        last_name: userData.lastName,
-                        role: userData.userType,
+                        email: patientData.email,
+                        first_name: patientData.firstName,
+                        last_name: patientData.lastName,
+                        role: 'patient',
                         password: '',
                     }),
                 });
@@ -190,46 +201,51 @@ const PatientsAdmin: React.FC = () => {
                 await response.json();
                 
                 // Update local state
-                setUsersList(prevUsers => 
-                    prevUsers.map(user => 
-                        user.id === userData.id 
+                setPatientsList(prevPatients => 
+                    prevPatients.map(patient => 
+                        patient.id === patientData.id 
                             ? { 
-                                ...userData, 
-                                name: `${userData.firstName} ${userData.lastName}`,
+                                ...patientData, 
+                                name: `${patientData.firstName} ${patientData.lastName}`,
                               } 
-                            : user
+                            : patient
                     )
                 );
             } else {
-                // Add new user - POST request
+                // Add new patient - POST request
                 const response = await fetch('/api/users', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        email: userData.email,
-                        first_name: userData.firstName,
-                        last_name: userData.lastName,
-                        role: userData.userType,
+                        email: patientData.email,
+                        first_name: patientData.firstName,
+                        last_name: patientData.lastName,
+                        role: 'patient',
                         password: 'password', // You should have a proper password field in the form
                     }),
-                });
+                }); 
 
                 if (!response.ok) {
                     throw new Error(`Error: ${response.status}`);
                 }
 
-                const newUser = await response.json();
+                const newPatient = await response.json();
+                
+                // Ensure newPatient has an id
+                if (!newPatient.id) {
+                    throw new Error('Server response missing patient ID');
+                }
                 
                 // Format the response to match our User type
-                const formattedNewUser = {
-                    id: newUser.id,
-                    firstName: newUser.first_name,
-                    lastName: newUser.last_name,
-                    name: `${newUser.first_name} ${newUser.last_name}`,
-                    email: newUser.email,
-                    userType: newUser.role,
+                const formattedNewPatient = {
+                    id: newPatient.id,
+                    firstName: newPatient.first_name,
+                    lastName: newPatient.last_name,
+                    name: `${newPatient.first_name} ${newPatient.last_name}`,
+                    email: newPatient.email,
+                    userType: newPatient.role,
                     lastVisit: new Date().toISOString().split('T')[0],
                     appointmentsTotal: 0,
                     status: 'active' as const,
@@ -237,32 +253,58 @@ const PatientsAdmin: React.FC = () => {
                 };
                 
                 // Update local state
-                setUsersList(prevUsers => [...prevUsers, formattedNewUser]);
+                setPatientsList(prevPatients => [...prevPatients, formattedNewPatient]);
             }
             
             // Close the form
             setIsFormOpen(false);
         } catch (err) {
-            console.error('Error saving user:', err);
-            alert('Failed to save user. Please try again.');
+            console.error('Error saving patient:', err);
+            alert('Failed to save patient. Please try again.');
         }
     };
 
-    const handleDeleteUser = async (userId: number | string) => {
+    const handleDeletePatient = async (patientId: number | string) => {
+        if (!patientId) {
+            console.error('Error deleting patient: Missing patient ID');
+            alert('Failed to delete patient: Invalid patient ID');
+            return;
+        }
+
+        if (!confirm('Are you sure you want to delete this patient?')) {
+            return;
+        }
+        
         try {
-            const response = await fetch(`/api/users/${userId}`, {
+            // First check if there are any appointments for this patient
+            const appointmentsResponse = await fetch(`/api/appointments/patient/${patientId}`);
+            if (appointmentsResponse.ok) {
+                const appointments = await appointmentsResponse.json();
+                if (appointments && appointments.length > 0) {
+                    if (!confirm('This patient has existing appointments. Deleting the patient will also delete all their appointments. Continue?')) {
+                        return;
+                    }
+                }
+            }
+
+            // Delete the user record (this will cascade delete patient data due to foreign key constraints)
+            const response = await fetch(`/api/users/${patientId}`, {
                 method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
 
             if (!response.ok) {
-                throw new Error(`Error: ${response.status}`);
+                const errorData = await response.json().catch(() => null);
+                throw new Error(`Error: ${response.status}${errorData ? ' - ' + errorData.message : ''}`);
             }
 
             // Update local state
-            setUsersList(prevUsers => prevUsers.filter(user => user.id !== userId));
+            setPatientsList(prevPatients => prevPatients.filter(patient => patient.id !== patientId));
         } catch (err) {
-            console.error('Error deleting user:', err);
-            alert('Failed to delete user. Please try again.');
+            console.error('Error deleting patient:', err);
+            alert('Failed to delete patient. Please try again.');
         }
     };
 
@@ -272,24 +314,24 @@ const PatientsAdmin: React.FC = () => {
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="w-full py-6">
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold text-blue-800">Users Administration</h2>
+                        <h2 className="text-2xl font-bold text-blue-800">Patients Administration</h2>
                         <Button 
                             themeColor={'primary'}
-                            onClick={handleAddUser}
+                            onClick={handleAddPatient}
                         >
-                            Add New User
+                            Add New Patient
                         </Button>
                     </div>
                     
                     {isLoading ? (
                         <div className="text-center py-10">
-                            <p>Loading users...</p>
+                            <p>Loading patients...</p>
                         </div>
                     ) : error ? (
                         <div className="text-center py-10 text-red-600">
                             <p>{error}</p>
                             <Button 
-                                onClick={fetchUsers} 
+                                onClick={fetchPatients} 
                                 className="mt-4"
                             >
                                 Try Again
@@ -297,12 +339,12 @@ const PatientsAdmin: React.FC = () => {
                         </div>
                     ) : (
                         <ListView
-                            data={usersList}
+                            data={patientsList}
                             item={(props) => (
                                 <UserCard 
                                     {...props} 
-                                    onEdit={handleEditUser} 
-                                    onDelete={handleDeleteUser}
+                                    onEdit={handleEditPatient} 
+                                    onDelete={handleDeletePatient}
                                 />
                             )}
                             className="space-y-2"
@@ -315,12 +357,12 @@ const PatientsAdmin: React.FC = () => {
                 </div>
             </main>
 
-            {/* User Form Modal */}
-            <UserForm 
-                user={selectedUser}
+            {/* Patient Form Modal */}
+            <PatientForm 
+                patient={selectedPatient}
                 isOpen={isFormOpen}
                 onClose={() => setIsFormOpen(false)}
-                onSave={handleSaveUser}
+                onSave={handleSavePatient}
             />
         </div>
     );

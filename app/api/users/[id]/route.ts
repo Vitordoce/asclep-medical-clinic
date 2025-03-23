@@ -36,7 +36,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE({ params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
     const result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING *', [params.id]) as { rows: User[] };
     

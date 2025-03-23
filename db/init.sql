@@ -4,12 +4,14 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
     role VARCHAR(50) NOT NULL CHECK (role IN ('patient', 'doctor'))
 );
 
 CREATE TABLE doctors (
     user_id INTEGER PRIMARY KEY,
     specialty VARCHAR(100) NOT NULL,
+    address VARCHAR(255) NOT NULL,
     CONSTRAINT fk_doctor_user FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
