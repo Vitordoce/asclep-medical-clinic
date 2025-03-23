@@ -26,7 +26,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const menuItems = [
     { text: 'Dashboard', path: '/admin/dashboard' },
-    { text: 'Users', path: '/admin/users' },
+    { text: 'Patients', path: '/admin/patients' },
     { text: 'Doctors', path: '/admin/doctors' },
     { text: 'Calendar', path: '/admin/calendar' },
   ];

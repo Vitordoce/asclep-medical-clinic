@@ -179,7 +179,7 @@ export default function Header() {
               Sign Up
             </Link>
             <Link 
-              href="/doctor/login"
+              href="/login"
               className="text-purple-600 hover:text-purple-800 font-medium transition-colors"
             >
               Login

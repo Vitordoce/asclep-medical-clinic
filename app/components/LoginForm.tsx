@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Form, Field, FormElement, FieldWrapper } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
 import { Input } from "@progress/kendo-react-inputs";
@@ -36,6 +36,7 @@ export default function LoginForm() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState<UserRole>("patient");
+  const formRef = useRef<{ setValues: (values: FormValues) => void }>(null);
   
   // Get role-specific auth contexts
   const adminAuth = useAdminAuth();
@@ -114,6 +115,20 @@ export default function LoginForm() {
     role: selectedRole
   };
   
+  // Fill form with preset credentials
+  const fillFormWithCredentials = (email: string, password: string, role: UserRole) => {
+    // Update form state if form reference exists
+    if (formRef.current) {
+      formRef.current.setValues({
+        email,
+        password,
+        role
+      });
+    }
+    // Also update the role state for the dropdown
+    setSelectedRole(role);
+  };
+  
   return (
     <div className="p-6 bg-white rounded-xl shadow-md max-w-md mx-auto">
       <div className="text-center mb-8">
@@ -130,6 +145,7 @@ export default function LoginForm() {
       )}
       
       <Form
+        ref={formRef}
         initialValues={initialValues}
         onSubmit={handleSubmit}
         render={(formRenderProps) => (
@@ -214,26 +230,39 @@ export default function LoginForm() {
       />
       
       {/* Quick login helpers for development */}
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <h3 className="text-sm font-medium text-[var(--gray-700)] mb-3">Demo Accounts</h3>
-        <div className="grid grid-cols-3 gap-1 text-xs">
-          <div className="p-1 bg-[var(--gray-700)] rounded">
-            <p><strong>Patient:</strong></p>
-            <p>patient@example.com</p>
-            <p>patient123</p>
-          </div>
-            <div className="p-1 bg-[var(--gray-700)] rounded">
-            <p><strong>Doctor:</strong></p>
-            <p>doctor@example.com</p>
-            <p>doctor123</p>
-          </div>
-            <div className="p-1 bg-[var(--gray-700)] rounded">
-            <p><strong>Admin:</strong></p>
-            <p>admin@example.com</p>
-            <p>admin123</p>
+      {process.env.NODE_ENV !== 'production' && (
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <h3 className="text-sm font-medium text-[var(--gray-700)] mb-3">Demo Accounts</h3>
+          <div className="grid grid-cols-3 gap-3 text-xs">
+            <button 
+              onClick={() => fillFormWithCredentials('patient@example.com', 'patient123', 'patient')}
+              className="p-2 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded transition-colors"
+            >
+              <p className="font-bold mb-1">Patient Login</p>
+              <p>patient@example.com</p>
+              <p>patient123</p>
+            </button>
+            
+            <button 
+              onClick={() => fillFormWithCredentials('doctor@example.com', 'doctor123', 'doctor')}
+              className="p-2 bg-green-100 hover:bg-green-200 text-green-800 rounded transition-colors"
+            >
+              <p className="font-bold mb-1">Doctor Login</p>
+              <p>doctor@example.com</p>
+              <p>doctor123</p>
+            </button>
+            
+            <button 
+              onClick={() => fillFormWithCredentials('admin@example.com', 'admin123', 'admin')}
+              className="p-2 bg-purple-100 hover:bg-purple-200 text-purple-800 rounded transition-colors"
+            >
+              <p className="font-bold mb-1">Admin Login</p>
+              <p>admin@example.com</p>
+              <p>admin123</p>
+            </button>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 } 

@@ -99,7 +99,7 @@ const UserCard = (props: { dataItem: User; onEdit: (user: User) => void; onDelet
     );
 };
 
-const UsersAdmin: React.FC = () => {
+const PatientsAdmin: React.FC = () => {
     const [usersList, setUsersList] = useState<User[]>([]);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
@@ -326,4 +326,4 @@ const UsersAdmin: React.FC = () => {
     );
 };
 
-export default UsersAdmin; 
+export default PatientsAdmin; 
